@@ -40,8 +40,12 @@ export const Nav = async () => {
 				{/* Cart and user icons */}
 				<div className="flex items-center gap-2">
 					<CartIcon />
-					<YnsLink href="/login" aria-label="Login" className="hidden lg:block">
-						<UserIcon className="h-5 w-5 hover:text-white/70 transition" />
+					<YnsLink
+						href="/login"
+						aria-label="Login"
+						className="hidden lg:grid h-10 w-10 place-items-center rounded-full ring-1 ring-white/20 bg-white/10 hover:bg-white/15 transition focus-visible:ring-2 focus-visible:ring-white/50 outline-none"
+					>
+						<UserIcon className="h-5 w-5 text-white" />
 					</YnsLink>
 				</div>
 
