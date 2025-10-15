@@ -1,231 +1,264 @@
 "use client";
 
-import type { Cart, ProductInfo } from "commerce-kit";
 import {
 	createContext,
 	type ReactNode,
-	startTransition,
 	useContext,
 	useEffect,
-	useOptimistic,
 	useState,
+	useCallback,
+	useRef,
 } from "react";
-import {
-	addToCartAction,
-	getCartAction,
-	removeFromCartAction,
-	updateCartItemAction,
-} from "@/actions/cart-actions";
 
-type CartAction =
-	| { type: "ADD_ITEM"; variantId: string; quantity: number; product?: ProductInfo }
-	| { type: "UPDATE_ITEM"; variantId: string; quantity: number }
-	| { type: "REMOVE_ITEM"; variantId: string }
-	| { type: "SYNC_CART"; cart: Cart | null };
+// ============================================================================
+// Types
+// ============================================================================
 
-interface CartContextType {
-	cart: Cart | null;
-	isCartOpen: boolean;
+export type CartItem = {
+	id: string; // unique per product+variant
+	slug: string;
+	title: string;
+	priceCents: number;
+	currency: "USD" | "EUR" | string;
+	image: string;
+	variant?: string;
+	size?: string;
+	color?: string;
+	quantity: number; // >= 1
+	maxQty?: number; // optional cap
+};
+
+export type CartState = {
+	items: CartItem[];
+	subtotalCents: number;
 	itemCount: number;
+};
+
+interface CartContextType extends CartState {
+	isCartOpen: boolean;
 	openCart: () => void;
 	closeCart: () => void;
-	optimisticAdd: (variantId: string, quantity: number, product?: ProductInfo) => Promise<void>;
-	optimisticUpdate: (variantId: string, quantity: number) => Promise<void>;
-	optimisticRemove: (variantId: string) => Promise<void>;
+	toggleCart: () => void;
+	addItem: (item: Omit<CartItem, "id"> & { id?: string }) => void;
+	removeItem: (id: string) => void;
+	updateQty: (id: string, qty: number) => void;
+	clearCart: () => void;
 }
 
-function cartReducer(state: Cart | null, action: CartAction): Cart | null {
-	switch (action.type) {
-		case "ADD_ITEM": {
-			if (!state) {
-				// Create a new cart if none exists
-				return {
-					id: "optimistic",
-					items: [
-						{
-							id: action.variantId,
-							productId: action.variantId,
-							variantId: action.variantId,
-							quantity: action.quantity,
-							price: 0, // Will be updated from server
-							product: action.product,
-						},
-					],
-					total: 0,
-					currency: "USD",
-				};
-			}
+// ============================================================================
+// Constants
+// ============================================================================
 
-			// Check if item already exists
-			const existingItemIndex = state.items.findIndex(
-				(item) => (item.variantId || item.productId) === action.variantId,
-			);
+const STORAGE_KEY = "gbones:cart:v1";
+const DEBOUNCE_MS = 500;
 
-			if (existingItemIndex >= 0) {
-				// Update existing item
-				const existingItem = state.items[existingItemIndex];
-				if (existingItem) {
-					const updatedItems = [...state.items];
-					updatedItems[existingItemIndex] = {
-						...existingItem,
-						quantity: existingItem.quantity + action.quantity,
-					};
-					return {
-						...state,
-						items: updatedItems,
-					};
-				}
-			}
+// ============================================================================
+// Utilities
+// ============================================================================
 
-			// Add new item
-			return {
-				...state,
-				items: [
-					...state.items,
-					{
-						id: action.variantId,
-						productId: action.variantId,
-						variantId: action.variantId,
-						quantity: action.quantity,
-						price: 0, // Will be updated from server
-						product: action.product,
-					},
-				],
-			};
+/**
+ * Generate a unique cart item ID based on product attributes
+ */
+function generateItemId(item: Omit<CartItem, "id" | "quantity">): string {
+	const parts = [item.slug];
+	if (item.variant) parts.push(item.variant);
+	if (item.size) parts.push(item.size);
+	if (item.color) parts.push(item.color);
+	return parts.join(":");
+}
+
+/**
+ * Safely check if we're in a browser environment
+ */
+function isBrowser(): boolean {
+	return typeof window !== "undefined";
+}
+
+/**
+ * Load cart from localStorage (SSR-safe)
+ */
+function loadCartFromStorage(): CartItem[] {
+	if (!isBrowser()) return [];
+
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (!stored) return [];
+
+		const parsed = JSON.parse(stored);
+		if (Array.isArray(parsed)) {
+			return parsed;
 		}
+	} catch (error) {
+		console.error("[Cart] Failed to load from localStorage:", error);
+	}
 
-		case "UPDATE_ITEM": {
-			if (!state) return state;
+	return [];
+}
 
-			if (action.quantity <= 0) {
-				// Remove item if quantity is 0 or less
-				return {
-					...state,
-					items: state.items.filter((item) => (item.variantId || item.productId) !== action.variantId),
-				};
-			}
+/**
+ * Save cart to localStorage (debounced)
+ */
+function saveCartToStorage(items: CartItem[]): void {
+	if (!isBrowser()) return;
 
-			const updatedItems = state.items.map((item) => {
-				if ((item.variantId || item.productId) === action.variantId) {
-					return { ...item, quantity: action.quantity };
-				}
-				return item;
-			});
-
-			return {
-				...state,
-				items: updatedItems,
-			};
-		}
-
-		case "REMOVE_ITEM": {
-			if (!state) return state;
-
-			return {
-				...state,
-				items: state.items.filter((item) => (item.variantId || item.productId) !== action.variantId),
-			};
-		}
-
-		case "SYNC_CART": {
-			return action.cart;
-		}
-
-		default:
-			return state;
+	try {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+	} catch (error) {
+		console.error("[Cart] Failed to save to localStorage:", error);
 	}
 }
+
+/**
+ * Compute derived state (subtotal & item count)
+ */
+function computeDerivedState(items: CartItem[]): Pick<CartState, "subtotalCents" | "itemCount"> {
+	const subtotalCents = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
+	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+	return { subtotalCents, itemCount };
+}
+
+// ============================================================================
+// Context
+// ============================================================================
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-	const [actualCart, setActualCart] = useState<Cart | null>(null);
-	const [optimisticCart, setOptimisticCart] = useOptimistic(actualCart, cartReducer);
+	const [items, setItems] = useState<CartItem[]>([]);
 	const [isCartOpen, setIsCartOpen] = useState(false);
+	const [isHydrated, setIsHydrated] = useState(false);
 
-	// Calculate item count from optimistic cart
-	const itemCount = optimisticCart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+	// Debounce timer ref
+	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	// Load initial cart
+	// Debounced save to localStorage
+	const debouncedSave = useCallback((itemsToSave: CartItem[]) => {
+		if (saveTimeoutRef.current) {
+			clearTimeout(saveTimeoutRef.current);
+		}
+
+		saveTimeoutRef.current = setTimeout(() => {
+			saveCartToStorage(itemsToSave);
+		}, DEBOUNCE_MS);
+	}, []);
+
+	// Hydrate from localStorage on mount (client-only)
 	useEffect(() => {
-		getCartAction().then((cart) => {
-			setActualCart(cart);
+		const storedItems = loadCartFromStorage();
+		setItems(storedItems);
+		setIsHydrated(true);
+	}, []);
+
+	// Save to localStorage whenever items change (after hydration)
+	useEffect(() => {
+		if (isHydrated) {
+			debouncedSave(items);
+		}
+
+		// Cleanup timeout on unmount
+		return () => {
+			if (saveTimeoutRef.current) {
+				clearTimeout(saveTimeoutRef.current);
+			}
+		};
+	}, [items, isHydrated, debouncedSave]);
+
+	// Compute derived state
+	const { subtotalCents, itemCount } = computeDerivedState(items);
+
+	// ========================================================================
+	// Actions
+	// ========================================================================
+
+	const addItem = useCallback((input: Omit<CartItem, "id"> & { id?: string }) => {
+		setItems((prev) => {
+			const id = input.id || generateItemId(input);
+			const existingIndex = prev.findIndex((item) => item.id === id);
+
+			if (existingIndex >= 0) {
+				// Item already exists, increment quantity
+				const updated = [...prev];
+				const existing = updated[existingIndex];
+				if (!existing) return prev;
+
+				const newQty = existing.quantity + (input.quantity || 1);
+				const cappedQty = existing.maxQty ? Math.min(newQty, existing.maxQty) : newQty;
+
+				updated[existingIndex] = {
+					...existing,
+					quantity: cappedQty,
+				};
+
+				return updated;
+			}
+
+			// Add new item
+			const newItem: CartItem = {
+				...input,
+				id,
+				quantity: input.quantity || 1,
+			};
+
+			return [...prev, newItem];
 		});
 	}, []);
 
-	// Sync optimistic cart with actual cart when it changes
-	useEffect(() => {
-		startTransition(() => {
-			setOptimisticCart({ type: "SYNC_CART", cart: actualCart });
-		});
-	}, [actualCart, setOptimisticCart]);
+	const removeItem = useCallback((id: string) => {
+		setItems((prev) => prev.filter((item) => item.id !== id));
+	}, []);
 
-	const openCart = () => setIsCartOpen(true);
-	const closeCart = () => setIsCartOpen(false);
-
-	const optimisticAdd = async (variantId: string, quantity = 1, product?: ProductInfo) => {
-		// Optimistically update UI
-		setOptimisticCart({ type: "ADD_ITEM", variantId, quantity, product });
-
-		try {
-			// Perform server action
-			const updatedCart = await addToCartAction(variantId, quantity);
-			setActualCart(updatedCart);
-		} catch (error) {
-			// Rollback will happen automatically via useEffect
-			console.error("Failed to add to cart:", error);
-			throw error;
+	const updateQty = useCallback((id: string, qty: number) => {
+		if (qty <= 0) {
+			// Remove item if quantity is 0 or less
+			removeItem(id);
+			return;
 		}
+
+		setItems((prev) =>
+			prev.map((item) => {
+				if (item.id !== id) return item;
+
+				const cappedQty = item.maxQty ? Math.min(qty, item.maxQty) : qty;
+				return {
+					...item,
+					quantity: cappedQty,
+				};
+			}),
+		);
+	}, [removeItem]);
+
+	const clearCart = useCallback(() => {
+		setItems([]);
+	}, []);
+
+	const openCart = useCallback(() => setIsCartOpen(true), []);
+	const closeCart = useCallback(() => setIsCartOpen(false), []);
+	const toggleCart = useCallback(() => setIsCartOpen((prev) => !prev), []);
+
+	// ========================================================================
+	// Context Value
+	// ========================================================================
+
+	const value: CartContextType = {
+		items,
+		subtotalCents,
+		itemCount,
+		isCartOpen,
+		openCart,
+		closeCart,
+		toggleCart,
+		addItem,
+		removeItem,
+		updateQty,
+		clearCart,
 	};
 
-	const optimisticUpdate = async (variantId: string, quantity: number) => {
-		// Optimistically update UI
-		setOptimisticCart({ type: "UPDATE_ITEM", variantId, quantity });
-
-		try {
-			// Perform server action
-			const updatedCart = await updateCartItemAction(variantId, quantity);
-			setActualCart(updatedCart);
-		} catch (error) {
-			// Rollback will happen automatically via useEffect
-			console.error("Failed to update cart item:", error);
-			throw error;
-		}
-	};
-
-	const optimisticRemove = async (variantId: string) => {
-		// Optimistically update UI
-		setOptimisticCart({ type: "REMOVE_ITEM", variantId });
-
-		try {
-			// Perform server action
-			const updatedCart = await removeFromCartAction(variantId);
-			setActualCart(updatedCart);
-		} catch (error) {
-			// Rollback will happen automatically via useEffect
-			console.error("Failed to remove from cart:", error);
-			throw error;
-		}
-	};
-
-	return (
-		<CartContext.Provider
-			value={{
-				cart: optimisticCart,
-				isCartOpen,
-				itemCount,
-				openCart,
-				closeCart,
-				optimisticAdd,
-				optimisticUpdate,
-				optimisticRemove,
-			}}
-		>
-			{children}
-		</CartContext.Provider>
-	);
+	return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
+/**
+ * Hook to access cart context
+ */
 export function useCart() {
 	const context = useContext(CartContext);
 	if (!context) {
@@ -233,3 +266,54 @@ export function useCart() {
 	}
 	return context;
 }
+
+// ============================================================================
+// TODO(Firebase): Future enhancements
+// ============================================================================
+/*
+TODO(Firebase): When integrating Firebase/Firestore:
+
+1. Replace localStorage with Firestore
+   - Store cart in: /users/{userId}/cart
+   - Use onSnapshot to listen for remote changes
+
+2. Merge local cart on login
+   - Check for existing cart in localStorage
+   - Merge with remote cart (prefer local quantities, dedupe by item.id)
+   - Clear localStorage after successful merge
+
+3. Sync cart updates to Firestore
+   - Replace saveCartToStorage with a Firestore batch write
+   - Handle offline mode with Firestore's built-in offline support
+
+4. Conflict resolution
+   - Use timestamps or version fields
+   - On conflict, prefer most recent update or highest quantity
+
+5. Example Firestore structure:
+   {
+     userId: "user123",
+     cart: {
+       items: [...],
+       updatedAt: Timestamp,
+       version: 1
+     }
+   }
+
+6. Update useEffect to subscribe to Firestore:
+   useEffect(() => {
+     if (!user) return;
+
+     const unsubscribe = onSnapshot(
+       doc(db, 'users', user.uid, 'cart'),
+       (snapshot) => {
+         const data = snapshot.data();
+         if (data?.items) {
+           setItems(data.items);
+         }
+       }
+     );
+
+     return unsubscribe;
+   }, [user]);
+*/

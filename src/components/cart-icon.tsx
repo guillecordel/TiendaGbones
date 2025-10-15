@@ -1,7 +1,7 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
-import { CartSidebar } from "@/components/cart-sidebar";
+import { CartDrawer } from "@/components/cart-drawer.client";
 import { useCart } from "@/context/cart-context";
 
 export function CartIcon() {
@@ -22,7 +22,7 @@ export function CartIcon() {
 				)}
 			</button>
 
-			<CartSidebar isOpen={isCartOpen} onClose={closeCart} />
+			<CartDrawer isOpen={isCartOpen} onClose={closeCart} />
 		</>
 	);
 }

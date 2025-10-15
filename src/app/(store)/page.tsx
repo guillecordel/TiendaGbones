@@ -4,6 +4,7 @@ import { publicUrl } from "@/env.mjs";
 import { getTranslations } from "@/i18n/server";
 import { commerce } from "@/lib/commerce";
 import StoreConfig from "@/store.config";
+import { CartDemo } from "@/components/cart-demo";
 import { CategoryBox } from "@/ui/category-box";
 import { ProductList } from "@/ui/products/product-list";
 import { YnsLink } from "@/ui/yns-link";
@@ -40,6 +41,8 @@ export default async function Home() {
 						</div>
 					</div>
 				</section>
+
+				<CartDemo />
 
 				<ProductList products={products} />
 

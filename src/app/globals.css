@@ -183,6 +183,11 @@
 		background-attachment: fixed;
 	}
 
+	/* Gbones gradient - fully opaque for drawers/modals */
+	.gbones-gradient {
+		background: linear-gradient(135deg, #240024 0%, #45006e 25%, #63009e 50%, #2d008a 75%, #001f4d 100%);
+	}
+
 	/* Ensure text is white for better readability on gradient */
 	body {
 		@apply text-white;
