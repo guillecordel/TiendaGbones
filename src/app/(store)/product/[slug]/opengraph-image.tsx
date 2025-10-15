@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getLocale } from "@/i18n/server";
 import { commerce } from "@/lib/commerce";
-import { formatMoney } from "@/lib/utils";
+import { formatMoneyEUR } from "@/lib/money";
 
 export const size = {
 	width: 1200,
@@ -49,11 +49,7 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
 				<div tw="flex-1 -mt-8 flex flex-col items-start justify-center px-16">
 					<p tw="font-black text-5xl mb-0">{product.name}</p>
 					<p tw="font-normal text-neutral-800 mt-0 text-3xl">
-						{formatMoney({
-							amount: product.price,
-							currency: product.currency,
-							locale,
-						})}
+						{formatMoneyEUR(product.price)}
 					</p>
 					<p tw="font-normal text-xl max-h-[7rem]">{product.summary || ""}</p>
 				</div>

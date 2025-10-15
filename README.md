@@ -9,6 +9,48 @@ Inspired by dark aesthetics and minimalism, it offers a sleek shopping experienc
 🔗 [Visit the live site](https://gbones.vercel.app)
 
 ---
+## 🖼️ Screenshots
+
+### 🏠 Home (iteraciones Desktop)
+![Home – v1](/screenshots/homePage.png)
+![Home – v2](/screenshots/HomePage2.png)
+![Home – v3](/screenshots/HomePage3.png)
+![Home – v4](/screenshots/HomePage4.png)
+
+---
+
+### 🛒 Cart
+**Desktop**
+![Cart – Desktop](/screenshots/CartDesktop.png)
+
+**Mobile**
+![Cart – Mobile](/screenshots/CartMobile.png)
+
+---
+
+### 🔐 Login
+**Desktop**
+![Login – Desktop](/screenshots/LoginDesktop.png)
+
+**Mobile**
+![Login – Mobile](/screenshots/LoginMobile.png)
+
+---
+
+### 🧾 Sign In
+**Desktop**
+![Sign In – Desktop](/screenshots/SingInDesktop.png)
+
+**Mobile**
+![Sign In – Mobile](/screenshots/SignInMobile.png)
+
+---
+
+### 🍔 Burger Menu
+**Mobile**
+![Burger Menu – Mobile](/screenshots/BurguerMenuMobile.png)
+
+---
 
 ## 🛠️ Tech Stack
 - **Next.js** 14  

@@ -1,6 +1,7 @@
 "use client";
 
 import { AddToCartButton } from "./add-to-cart-button";
+import { formatMoneyEUR } from "@/lib/money";
 
 /**
  * Demo section showcasing the cart functionality
@@ -12,8 +13,8 @@ export function CartDemo() {
 		{
 			slug: "skull-tshirt",
 			title: "Gbones Skull T-Shirt",
-			priceCents: 2999, // $29.99
-			currency: "USD",
+			priceCents: 2999, // €29.99
+			currency: "EUR",
 			image: "/calavera.svg",
 			variant: "Classic",
 			size: "M",
@@ -21,8 +22,8 @@ export function CartDemo() {
 		{
 			slug: "hoodie-purple",
 			title: "Purple Gradient Hoodie",
-			priceCents: 5999, // $59.99
-			currency: "USD",
+			priceCents: 5999, // €59.99
+			currency: "EUR",
 			image: "/calavera.svg",
 			variant: "Premium",
 			size: "L",
@@ -31,8 +32,8 @@ export function CartDemo() {
 		{
 			slug: "cap-black",
 			title: "Gbones Black Cap",
-			priceCents: 1999, // $19.99
-			currency: "USD",
+			priceCents: 1999, // €19.99
+			currency: "EUR",
 			image: "/calavera.svg",
 		},
 	];
@@ -78,9 +79,8 @@ export function CartDemo() {
 
 								<div className="flex items-baseline gap-2">
 									<span className="text-2xl font-bold text-white">
-										${(product.priceCents / 100).toFixed(2)}
+										{formatMoneyEUR(product.priceCents)}
 									</span>
-									<span className="text-sm text-white/50">{product.currency}</span>
 								</div>
 
 								{/* Add to Cart Button */}
@@ -89,7 +89,7 @@ export function CartDemo() {
 									variant="primary"
 									size="md"
 									className="w-full"
-									openCartOnAdd={true}
+									openCartOnAdd={false}
 								/>
 							</div>
 						</div>
@@ -100,7 +100,7 @@ export function CartDemo() {
 				<div className="mt-10 rounded-2xl bg-purple-500/10 ring-1 ring-purple-500/20 p-6 text-center">
 					<p className="text-white/80 text-sm">
 						<strong className="text-white">Note:</strong> This is a demo cart using localStorage.
-						When you integrate Firebase, items will sync across devices and persist after login.
+						When Firebase is integrated, items will sync across devices and persist after login.
 					</p>
 				</div>
 			</div>

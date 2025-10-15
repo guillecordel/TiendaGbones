@@ -4,21 +4,11 @@ import { X, Trash2, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useCart } from "@/context/cart-context";
+import { formatMoneyEUR } from "@/lib/money";
 
 interface CartDrawerProps {
 	isOpen: boolean;
 	onClose: () => void;
-}
-
-/**
- * Format price from cents to currency display
- */
-function formatPrice(amountCents: number, currency: string): string {
-	const amount = amountCents / 100;
-	return new Intl.NumberFormat("en-US", {
-		style: "currency",
-		currency: currency.toUpperCase(),
-	}).format(amount);
 }
 
 /**
@@ -49,7 +39,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
 	if (!isOpen) return null;
 
-	const currency = items[0]?.currency || "USD";
+	const currency = items[0]?.currency || "EUR";
 
 	return (
 		<>
@@ -134,7 +124,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 											</p>
 										)}
 										<p className="text-white/90 text-sm font-semibold mt-1">
-											{formatPrice(item.priceCents, item.currency)}
+											{formatMoneyEUR(item.priceCents)}
 										</p>
 									</div>
 
@@ -189,7 +179,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 						<div className="flex items-center justify-between text-white">
 							<span className="text-base font-medium">Subtotal</span>
 							<span className="text-xl font-semibold tabular-nums">
-								{formatPrice(subtotalCents, currency)}
+								{formatMoneyEUR(subtotalCents)}
 							</span>
 						</div>
 

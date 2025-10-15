@@ -24,7 +24,7 @@ export function AddToCartButton({
 	variant = "primary",
 	size = "md",
 	className,
-	openCartOnAdd = true,
+	openCartOnAdd = false, // Changed default to false - drawer only opens on manual click
 }: AddToCartButtonProps) {
 	const { addItem, openCart } = useCart();
 	const [isAdding, setIsAdding] = useState(false);
@@ -43,7 +43,7 @@ export function AddToCartButton({
 			// Show success state
 			setJustAdded(true);
 
-			// Open cart drawer if requested
+			// Open cart drawer if requested (now disabled by default)
 			if (openCartOnAdd) {
 				setTimeout(() => {
 					openCart();

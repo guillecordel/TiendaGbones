@@ -18,7 +18,8 @@ import {
 import { publicUrl } from "@/env.mjs";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { commerce } from "@/lib/commerce";
-import { deslugify, formatMoney } from "@/lib/utils";
+import { formatMoneyEUR } from "@/lib/money";
+import { deslugify } from "@/lib/utils";
 import { JsonLd, mappedProductToJsonLd } from "@/ui/json-ld";
 import { Markdown } from "@/ui/markdown";
 import { MainProductImage } from "@/ui/products/main-product-image";
@@ -95,11 +96,7 @@ export default async function SingleProductPage(props: {
 				<div className="lg:col-span-5 lg:col-start-8">
 					<h1 className="text-3xl font-bold leading-none tracking-tight text-white drop-shadow-lg">{product.name}</h1>
 					<p className="mt-2 text-2xl font-medium leading-none tracking-tight text-white/90 drop-shadow-md">
-						{formatMoney({
-							amount: product.price,
-							currency: product.currency,
-							locale,
-						})}
+						{formatMoneyEUR(product.price)}
 					</p>
 					<div className="mt-2 text-white/80">{(product.stock || 0) <= 0 && <div>Out of stock</div>}</div>
 				</div>

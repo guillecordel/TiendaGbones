@@ -1,12 +1,13 @@
 import type { Product } from "commerce-kit";
 import Image from "next/image";
 import { getLocale } from "@/i18n/server";
-import { formatMoney } from "@/lib/utils";
+import { formatMoneyEUR } from "@/lib/money";
 import { JsonLd, mappedProductsToJsonLd } from "@/ui/json-ld";
 import { YnsLink } from "@/ui/yns-link";
 
 export const ProductList = async ({ products }: { products: Product[] }) => {
 	const locale = await getLocale();
+
 
 	return (
 		<>
@@ -33,15 +34,7 @@ export const ProductList = async ({ products }: { products: Product[] }) => {
 									<div className="p-2">
 										<h2 className="text-xl font-medium text-white drop-shadow-md">{product.name}</h2>
 										<footer className="text-base font-normal text-white/90 drop-shadow-sm">
-											{product.price && (
-												<p>
-													{formatMoney({
-														amount: product.price,
-														currency: product.currency,
-														locale,
-													})}
-												</p>
-											)}
+											{product.price && <p>{formatMoneyEUR(product.price)}</p>}
 										</footer>
 									</div>
 								</article>
