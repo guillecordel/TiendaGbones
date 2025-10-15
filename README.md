@@ -9,46 +9,48 @@ Inspired by dark aesthetics and minimalism, it offers a sleek shopping experienc
 🔗 [Visit the live site](https://gbones.vercel.app)
 
 ---
-## 🖼️ Screenshots
+## Screenshots
 
 ### 🏠 Home (iteraciones Desktop)
-![Home – v1](/screenshots/homePage.png)
-![Home – v2](/screenshots/HomePage2.png)
-![Home – v3](/screenshots/HomePage3.png)
-![Home – v4](/screenshots/HomePage4.png)
+<img src="public/screenshots/homePage.png" width="320" />
+<img src="public/screenshots/HomePage2.png" width="320" />
+<img src="public/screenshots/HomePage3.png" width="320" />
+<img src="public/screenshots/HomePage4.png" width="320" />
+
+### 📱 Home (Mobile)
+<img src="public/screenshots/HomePageMobile.png" width="320" />
 
 ---
 
 ### 🛒 Cart
-**Desktop**
-![Cart – Desktop](/screenshots/CartDesktop.png)
+**Desktop**  
+<img src="public/screenshots/CartDesktop.png" width="600" />
 
-**Mobile**
-![Cart – Mobile](/screenshots/CartMobile.png)
+**Mobile**  
+<img src="public/screenshots/CartMobile.png" width="320" />
 
 ---
 
 ### 🔐 Login
-**Desktop**
-![Login – Desktop](/screenshots/LoginDesktop.png)
+**Desktop**  
+<img src="public/screenshots/LoginDesktop.png" width="600" />
 
-**Mobile**
-![Login – Mobile](/screenshots/LoginMobile.png)
-
----
-
-### 🧾 Sign In
-**Desktop**
-![Sign In – Desktop](/screenshots/SingInDesktop.png)
-
-**Mobile**
-![Sign In – Mobile](/screenshots/SignInMobile.png)
+**Mobile**  
+<img src="public/screenshots/LoginMobile.png" width="320" />
 
 ---
 
-### 🍔 Burger Menu
-**Mobile**
-![Burger Menu – Mobile](/screenshots/BurguerMenuMobile.png)
+### 🔑 Sign In
+**Desktop**  
+<img src="public/screenshots/SignInDesktop.png" width="600" />
+
+**Mobile**  
+<img src="public/screenshots/SignInMobile.png" width="320" />
+
+---
+
+### 🍔 Burger Menu (Mobile)
+<img src="public/screenshots/BurguerMenuMobile.png" width="320" />
 
 ---
 
