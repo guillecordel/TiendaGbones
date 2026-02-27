@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Trash2, Minus, Plus } from "lucide-react";
+import { Minus, Plus, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useCart } from "@/context/cart-context";
@@ -44,11 +44,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 	return (
 		<>
 			{/* Backdrop - clear separation from page */}
-			<div
-				className="fixed inset-0 z-[59] bg-black/60"
-				onClick={onClose}
-				aria-hidden="true"
-			/>
+			<div className="fixed inset-0 z-[59] bg-black/60" onClick={onClose} aria-hidden="true" />
 
 			{/* Cart Drawer - Full height, opaque gradient */}
 			<aside
@@ -65,7 +61,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 				>
 					<span className="text-lg font-semibold">Shopping Cart</span>
 					{itemCount > 0 && (
-						<span className="text-sm text-white/70">({itemCount} {itemCount === 1 ? "item" : "items"})</span>
+						<span className="text-sm text-white/70">
+							({itemCount} {itemCount === 1 ? "item" : "items"})
+						</span>
 					)}
 					<button
 						onClick={onClose}
@@ -99,13 +97,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 									{/* Thumbnail */}
 									<div className="relative h-16 w-16 overflow-hidden rounded-lg ring-1 ring-white/10 bg-white/5">
 										{item.image ? (
-											<Image
-												src={item.image}
-												alt={item.title}
-												fill
-												sizes="64px"
-												className="object-cover"
-											/>
+											<Image src={item.image} alt={item.title} fill sizes="64px" className="object-cover" />
 										) : (
 											<div className="w-full h-full flex items-center justify-center text-white/30">
 												<span className="text-xs">No image</span>
@@ -140,9 +132,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 											>
 												−
 											</button>
-											<span className="px-3 py-1.5 text-white font-medium tabular-nums">
-												{item.quantity}
-											</span>
+											<span className="px-3 py-1.5 text-white font-medium tabular-nums">{item.quantity}</span>
 											<button
 												onClick={() => updateQty(item.id, item.quantity + 1)}
 												disabled={item.maxQty ? item.quantity >= item.maxQty : false}
@@ -178,15 +168,11 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 						{/* Subtotal */}
 						<div className="flex items-center justify-between text-white">
 							<span className="text-base font-medium">Subtotal</span>
-							<span className="text-xl font-semibold tabular-nums">
-								{formatMoneyEUR(subtotalCents)}
-							</span>
+							<span className="text-xl font-semibold tabular-nums">{formatMoneyEUR(subtotalCents)}</span>
 						</div>
 
 						{/* Note */}
-						<p className="text-white/70 text-xs">
-							Shipping and taxes will be calculated at checkout
-						</p>
+						<p className="text-white/70 text-xs">Shipping and taxes will be calculated at checkout</p>
 
 						{/* Primary CTA - Proceed to Checkout */}
 						{/* TODO(Firebase): Replace with actual checkout flow */}

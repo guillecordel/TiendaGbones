@@ -1,7 +1,7 @@
 "use client";
 
-import { AddToCartButton } from "./add-to-cart-button";
 import { formatMoneyEUR } from "@/lib/money";
+import { AddToCartButton } from "./add-to-cart-button";
 
 /**
  * Demo section showcasing the cart functionality
@@ -45,8 +45,8 @@ export function CartDemo() {
 				<div className="text-center mb-10">
 					<h2 className="text-3xl font-bold text-white mb-3">Try the Cart</h2>
 					<p className="text-white/70 max-w-2xl mx-auto">
-						Click "Add to Cart" to see the cart drawer in action. All cart data is stored locally
-						in your browser.
+						Click "Add to Cart" to see the cart drawer in action. All cart data is stored locally in your
+						browser.
 					</p>
 				</div>
 
@@ -78,9 +78,7 @@ export function CartDemo() {
 								</div>
 
 								<div className="flex items-baseline gap-2">
-									<span className="text-2xl font-bold text-white">
-										{formatMoneyEUR(product.priceCents)}
-									</span>
+									<span className="text-2xl font-bold text-white">{formatMoneyEUR(product.priceCents)}</span>
 								</div>
 
 								{/* Add to Cart Button */}
@@ -99,8 +97,8 @@ export function CartDemo() {
 				{/* Info Box */}
 				<div className="mt-10 rounded-2xl bg-purple-500/10 ring-1 ring-purple-500/20 p-6 text-center">
 					<p className="text-white/80 text-sm">
-						<strong className="text-white">Note:</strong> This is a demo cart using localStorage.
-						When Firebase is integrated, items will sync across devices and persist after login.
+						<strong className="text-white">Note:</strong> This is a demo cart using localStorage. When
+						Firebase is integrated, items will sync across devices and persist after login.
 					</p>
 				</div>
 			</div>

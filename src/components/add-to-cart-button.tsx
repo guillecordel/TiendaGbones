@@ -1,8 +1,8 @@
 "use client";
 
-import { ShoppingBag, Check } from "lucide-react";
+import { Check, ShoppingBag } from "lucide-react";
 import { useState } from "react";
-import { useCart, type CartItem } from "@/context/cart-context";
+import { type CartItem, useCart } from "@/context/cart-context";
 import { cn } from "@/lib/utils";
 
 interface AddToCartButtonProps {
@@ -61,7 +61,8 @@ export function AddToCartButton({
 		}
 	}
 
-	const baseStyles = "inline-flex items-center justify-center gap-2 font-semibold transition-all rounded-full";
+	const baseStyles =
+		"inline-flex items-center justify-center gap-2 font-semibold transition-all rounded-full";
 
 	const sizeStyles = {
 		sm: "px-4 py-2 text-sm",
@@ -72,8 +73,7 @@ export function AddToCartButton({
 	const variantStyles = {
 		primary:
 			"bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white ring-2 ring-purple-500/50 shadow-lg shadow-purple-500/25 active:scale-[0.98]",
-		secondary:
-			"bg-white/15 hover:bg-white/25 text-white ring-1 ring-white/20 active:scale-[0.98]",
+		secondary: "bg-white/15 hover:bg-white/25 text-white ring-1 ring-white/20 active:scale-[0.98]",
 		outline:
 			"bg-transparent hover:bg-white/10 text-white ring-2 ring-white/30 hover:ring-white/50 active:scale-[0.98]",
 	};

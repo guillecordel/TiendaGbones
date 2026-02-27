@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 
 export function Login() {
 	const [email, setEmail] = useState("");
@@ -42,7 +42,10 @@ export function Login() {
 					{/* Logo - skull and text separated for independent control */}
 					<div className="mb-6 sm:mb-8 flex justify-center items-center gap-2 md:gap-3 -translate-x-5 sm:-translate-x-10 translate-y-[20px] sm:translate-y-[42px]">
 						{/* Skull Logo */}
-						<Link href="/" className="hover:opacity-80 transition logo-icon translate-y-[5px] sm:translate-y-[15px]">
+						<Link
+							href="/"
+							className="hover:opacity-80 transition logo-icon translate-y-[5px] sm:translate-y-[15px]"
+						>
 							<Image
 								src="/calavera.svg"
 								alt="Gbones Logo"
@@ -63,7 +66,9 @@ export function Login() {
 					{/* Form Container with Glassmorphism */}
 					<div className="backdrop-blur-md bg-white/10 rounded-2xl p-6 sm:p-8 border border-white/20 shadow-2xl">
 						<h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome back</h1>
-						<p className="text-sm sm:text-base text-white/70 mb-6 sm:mb-8">Sign in to your account to continue</p>
+						<p className="text-sm sm:text-base text-white/70 mb-6 sm:mb-8">
+							Sign in to your account to continue
+						</p>
 
 						<form onSubmit={handleLogin} className="space-y-5 sm:space-y-6">
 							{/* Email Field */}
@@ -123,7 +128,10 @@ export function Login() {
 						<div className="mt-6 text-center">
 							<p className="text-sm sm:text-base text-white/70">
 								Don't have an account?{" "}
-								<Link href="/signup" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+								<Link
+									href="/signup"
+									className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+								>
 									Sign up
 								</Link>
 							</p>

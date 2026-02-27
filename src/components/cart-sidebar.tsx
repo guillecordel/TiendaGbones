@@ -113,9 +113,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 							</div>
 							<div className="space-y-2">
 								<h3 className="text-lg font-medium text-white">Your cart is empty</h3>
-								<p className="text-sm text-white/60 max-w-xs">
-									Start shopping to add items to your cart
-								</p>
+								<p className="text-sm text-white/60 max-w-xs">Start shopping to add items to your cart</p>
 							</div>
 							<button
 								onClick={onClose}

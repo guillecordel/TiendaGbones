@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 
 export function Signup() {
 	const [name, setName] = useState("");
@@ -53,7 +53,10 @@ export function Signup() {
 					{/* Logo - skull and text separated for independent control */}
 					<div className="mb-6 sm:mb-8 flex justify-center items-center gap-2 md:gap-3 -translate-x-5 sm:-translate-x-10 translate-y-[20px] sm:translate-y-[42px]">
 						{/* Skull Logo */}
-						<Link href="/" className="hover:opacity-80 transition logo-icon translate-y-[5px] sm:translate-y-[15px]">
+						<Link
+							href="/"
+							className="hover:opacity-80 transition logo-icon translate-y-[5px] sm:translate-y-[15px]"
+						>
 							<Image
 								src="/calavera.svg"
 								alt="Gbones Logo"
@@ -172,7 +175,10 @@ export function Signup() {
 						<div className="mt-5 text-center">
 							<p className="text-sm sm:text-base text-white/70">
 								Already have an account?{" "}
-								<Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+								<Link
+									href="/login"
+									className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+								>
 									Sign in
 								</Link>
 							</p>

@@ -1,14 +1,6 @@
 "use client";
 
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useEffect,
-	useState,
-	useCallback,
-	useRef,
-} from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // ============================================================================
 // Types
@@ -207,25 +199,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
 		setItems((prev) => prev.filter((item) => item.id !== id));
 	}, []);
 
-	const updateQty = useCallback((id: string, qty: number) => {
-		if (qty <= 0) {
-			// Remove item if quantity is 0 or less
-			removeItem(id);
-			return;
-		}
+	const updateQty = useCallback(
+		(id: string, qty: number) => {
+			if (qty <= 0) {
+				// Remove item if quantity is 0 or less
+				removeItem(id);
+				return;
+			}
 
-		setItems((prev) =>
-			prev.map((item) => {
-				if (item.id !== id) return item;
+			setItems((prev) =>
+				prev.map((item) => {
+					if (item.id !== id) return item;
 
-				const cappedQty = item.maxQty ? Math.min(qty, item.maxQty) : qty;
-				return {
-					...item,
-					quantity: cappedQty,
-				};
-			}),
-		);
-	}, [removeItem]);
+					const cappedQty = item.maxQty ? Math.min(qty, item.maxQty) : qty;
+					return {
+						...item,
+						quantity: cappedQty,
+					};
+				}),
+			);
+		},
+		[removeItem],
+	);
 
 	const clearCart = useCallback(() => {
 		setItems([]);

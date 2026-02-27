@@ -16,7 +16,7 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { publicUrl } from "@/env.mjs";
-import { getLocale, getTranslations } from "@/i18n/server";
+import { getTranslations } from "@/i18n/server";
 import { commerce } from "@/lib/commerce";
 import { formatMoneyEUR } from "@/lib/money";
 import { deslugify } from "@/lib/utils";
@@ -59,19 +59,22 @@ export default async function SingleProductPage(props: {
 	}
 
 	const t = await getTranslations("/product.page");
-	const locale = await getLocale();
+	//const locale = await getLocale();
 
 	// Cast to YnsProduct to access YNS-specific fields
 	const ynsProduct = product as YnsProduct;
 	const category = ynsProduct.category?.slug;
-	const images = product.images;
+	const images: string[] = product.images;
 
 	return (
 		<article className="pb-12">
 			<Breadcrumb>
 				<BreadcrumbList className="text-white/80">
 					<BreadcrumbItem>
-						<BreadcrumbLink asChild className="inline-flex min-h-12 min-w-12 items-center justify-center text-white/80 hover:text-white">
+						<BreadcrumbLink
+							asChild
+							className="inline-flex min-h-12 min-w-12 items-center justify-center text-white/80 hover:text-white"
+						>
 							<YnsLink href="/products">{t("allProducts")}</YnsLink>
 						</BreadcrumbLink>
 					</BreadcrumbItem>
@@ -79,7 +82,10 @@ export default async function SingleProductPage(props: {
 						<>
 							<BreadcrumbSeparator className="text-white/60" />
 							<BreadcrumbItem>
-								<BreadcrumbLink className="inline-flex min-h-12 min-w-12 items-center justify-center text-white/80 hover:text-white" asChild>
+								<BreadcrumbLink
+									className="inline-flex min-h-12 min-w-12 items-center justify-center text-white/80 hover:text-white"
+									asChild
+								>
 									<YnsLink href={`/category/${category}`}>{deslugify(category)}</YnsLink>
 								</BreadcrumbLink>
 							</BreadcrumbItem>
@@ -94,7 +100,9 @@ export default async function SingleProductPage(props: {
 
 			<div className="mt-4 grid gap-4 lg:grid-cols-12">
 				<div className="lg:col-span-5 lg:col-start-8">
-					<h1 className="text-3xl font-bold leading-none tracking-tight text-white drop-shadow-lg">{product.name}</h1>
+					<h1 className="text-3xl font-bold leading-none tracking-tight text-white drop-shadow-lg">
+						{product.name}
+					</h1>
 					<p className="mt-2 text-2xl font-medium leading-none tracking-tight text-white/90 drop-shadow-md">
 						{formatMoneyEUR(product.price)}
 					</p>
@@ -149,6 +157,11 @@ export default async function SingleProductPage(props: {
 
 					<AddToCart
 						variantId={ynsProduct.variants[0]?.id || product.id}
+						slug={params.slug}
+						title={product.name}
+						priceCents={product.price}
+						currency="EUR"
+						image={images[0] || ""}
 						className={(product.stock || 0) <= 0 ? "opacity-50 cursor-not-allowed" : ""}
 					>
 						{(product.stock || 0) <= 0 ? "Out of Stock" : "Add to Cart"}

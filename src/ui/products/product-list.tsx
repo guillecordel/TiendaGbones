@@ -8,7 +8,6 @@ import { YnsLink } from "@/ui/yns-link";
 export const ProductList = async ({ products }: { products: Product[] }) => {
 	const locale = await getLocale();
 
-
 	return (
 		<>
 			<ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

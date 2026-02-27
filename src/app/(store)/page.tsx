@@ -1,13 +1,14 @@
 import Image from "next/image";
 import type { Metadata } from "next/types";
+import { CartDemo } from "@/components/cart-demo";
 import { publicUrl } from "@/env.mjs";
 import { getTranslations } from "@/i18n/server";
 import { commerce } from "@/lib/commerce";
 import StoreConfig from "@/store.config";
-import { CartDemo } from "@/components/cart-demo";
 import { CategoryBox } from "@/ui/category-box";
 import { ProductList } from "@/ui/products/product-list";
 import { YnsLink } from "@/ui/yns-link";
+import TestFirebase from "../test-firebase";
 
 export const metadata: Metadata = {
 	alternates: { canonical: publicUrl },
@@ -30,7 +31,9 @@ export default async function Home() {
 								<h1 className="text-balance text-3xl sm:text-4xl md:text-5xl font-normal tracking-wide text-white leading-tight drop-shadow-lg">
 									{t("hero.title")}
 								</h1>
-								<p className="mt-3 sm:mt-4 text-pretty text-sm sm:text-base text-neutral-100/90">{t("hero.description")}</p>
+								<p className="mt-3 sm:mt-4 text-pretty text-sm sm:text-base text-neutral-100/90">
+									{t("hero.description")}
+								</p>
 								<YnsLink
 									className="mt-4 sm:mt-6 inline-flex h-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md px-6 font-medium text-white border border-white/30 transition-all hover:bg-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
 									href={t("hero.link")}
@@ -55,6 +58,10 @@ export default async function Home() {
 						</div>
 					</div>
 				</section>
+				{/* 🔥botón de prueba Firebase aquí */}
+				<div className="flex justify-center my-8">
+					<TestFirebase />
+				</div>
 			</main>
 		);
 	} catch (error) {
