@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus, Trash2, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useCart } from "@/context/cart-context";
@@ -39,7 +39,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
 	if (!isOpen) return null;
 
-	const currency = items[0]?.currency || "EUR";
+	//const currency = items[0]?.currency || "EUR";
 
 	return (
 		<>

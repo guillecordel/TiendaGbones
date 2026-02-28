@@ -78,7 +78,7 @@ function loadCartFromStorage(): CartItem[] {
 
 		const parsed = JSON.parse(stored);
 		if (Array.isArray(parsed)) {
-			return parsed;
+			return parsed as CartItem[];
 		}
 	} catch (error) {
 		console.error("[Cart] Failed to load from localStorage:", error);

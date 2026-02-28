@@ -1,4 +1,4 @@
-import { Menu, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import { CartIcon } from "@/components/cart-icon";
 import { MobileMenu } from "@/ui/nav/mobile-menu.client";

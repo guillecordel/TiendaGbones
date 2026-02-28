@@ -1,5 +1,16 @@
 // Mock commerce data for development without API
-import type { Product } from "commerce-kit";
+import type { Cart, CartItem, Product } from "commerce-kit";
+
+// In-memory cart store
+const mockCarts = new Map<string, Cart>();
+
+function generateId(): string {
+	return Math.random().toString(36).substring(2, 11);
+}
+
+function computeTotal(items: CartItem[]): number {
+	return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
 
 const mockProducts: Product[] = [
 	{
@@ -79,13 +90,17 @@ const mockProducts: Product[] = [
 // Mock commerce implementation
 export const mockCommerce = {
 	product: {
-		browse: async ({ first = 10 }: { first?: number } = {}) => {
+		browse: async ({ first = 10, category }: { first?: number; category?: string } = {}) => {
 			// Simulate API delay
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
+			const filtered = category
+				? mockProducts.filter((p) => p.slug?.startsWith(category))
+				: mockProducts;
+
 			return {
-				data: mockProducts.slice(0, first),
-				hasNextPage: mockProducts.length > first,
+				data: filtered.slice(0, first),
+				hasNextPage: filtered.length > first,
 			};
 		},
 
@@ -123,6 +138,102 @@ export const mockCommerce = {
 			return {
 				data: mockProducts,
 			};
+		},
+	},
+
+	cart: {
+		get: async ({ cartId }: { cartId: string }): Promise<Cart | null> => {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			return mockCarts.get(cartId) ?? null;
+		},
+
+		add: async ({
+			cartId,
+			variantId,
+			quantity,
+		}: {
+			cartId?: string;
+			variantId: string;
+			quantity: number;
+		}): Promise<Cart> => {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+
+			const product = mockProducts.find((p) => p.id === variantId);
+			const price = product?.price ?? 0;
+
+			const id = cartId ?? generateId();
+			const cart: Cart = mockCarts.get(id) ?? {
+				id,
+				items: [],
+				total: 0,
+				currency: "USD",
+			};
+
+			const existing = cart.items.find((item) => item.variantId === variantId);
+			if (existing) {
+				existing.quantity += quantity;
+			} else {
+				cart.items.push({
+					id: generateId(),
+					productId: variantId,
+					variantId,
+					quantity,
+					price,
+				});
+			}
+
+			cart.total = computeTotal(cart.items);
+			mockCarts.set(id, cart);
+			return cart;
+		},
+
+		update: async ({
+			cartId,
+			variantId,
+			quantity,
+		}: {
+			cartId: string;
+			variantId: string;
+			quantity: number;
+		}): Promise<Cart> => {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+
+			const cart = mockCarts.get(cartId);
+			if (!cart) throw new Error(`Cart not found: ${cartId}`);
+
+			const item = cart.items.find((i) => i.variantId === variantId);
+			if (item) item.quantity = quantity;
+
+			cart.total = computeTotal(cart.items);
+			return cart;
+		},
+
+		remove: async ({
+			cartId,
+			variantId,
+		}: {
+			cartId: string;
+			variantId: string;
+		}): Promise<Cart> => {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+
+			const cart = mockCarts.get(cartId);
+			if (!cart) throw new Error(`Cart not found: ${cartId}`);
+
+			cart.items = cart.items.filter((i) => i.variantId !== variantId);
+			cart.total = computeTotal(cart.items);
+			return cart;
+		},
+
+		clear: async ({ cartId }: { cartId: string }): Promise<Cart> => {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+
+			const cart = mockCarts.get(cartId);
+			if (!cart) throw new Error(`Cart not found: ${cartId}`);
+
+			cart.items = [];
+			cart.total = 0;
+			return cart;
 		},
 	},
 };
