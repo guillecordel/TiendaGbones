@@ -61,7 +61,6 @@ export default async function SingleProductPage(props: {
 	const t = await getTranslations("/product.page");
 	//const locale = await getLocale();
 
-	// Cast to YnsProduct to access YNS-specific fields
 	const ynsProduct = product as YnsProduct;
 	const category = ynsProduct.category?.slug;
 	const images: string[] = product.images;
@@ -106,7 +105,9 @@ export default async function SingleProductPage(props: {
 					<p className="mt-2 text-2xl font-medium leading-none tracking-tight text-white/90 drop-shadow-md">
 						{formatMoneyEUR(product.price)}
 					</p>
-					<div className="mt-2 text-white/80">{(product.stock || 0) <= 0 && <div>Out of stock</div>}</div>
+					<div className="mt-2 text-white/80">
+					{product.stock !== undefined && product.stock <= 0 && <div>Out of stock</div>}
+				</div>
 				</div>
 
 				<div className="lg:col-span-7 lg:row-span-3 lg:row-start-1">
@@ -156,15 +157,15 @@ export default async function SingleProductPage(props: {
 					</section>
 
 					<AddToCart
-						variantId={ynsProduct.variants[0]?.id || product.id}
+						variantId={ynsProduct.variants?.[0]?.id ?? product.id}
 						slug={params.slug}
 						title={product.name}
 						priceCents={product.price}
 						currency="EUR"
 						image={images[0] || ""}
-						className={(product.stock || 0) <= 0 ? "opacity-50 cursor-not-allowed" : ""}
+						className={product.stock !== undefined && product.stock <= 0 ? "opacity-50 cursor-not-allowed" : ""}
 					>
-						{(product.stock || 0) <= 0 ? "Out of Stock" : "Add to Cart"}
+						{product.stock !== undefined && product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
 					</AddToCart>
 				</div>
 			</div>

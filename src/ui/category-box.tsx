@@ -3,12 +3,20 @@ import { getTranslations } from "@/i18n/server";
 import { deslugify } from "@/lib/utils";
 import { YnsLink } from "@/ui/yns-link";
 
-export async function CategoryBox({ categorySlug, src }: { categorySlug: string; src: ImageProps["src"] }) {
+export async function CategoryBox({
+	categorySlug,
+	src,
+	href,
+}: {
+	categorySlug: string;
+	src: ImageProps["src"];
+	href?: string;
+}) {
 	const t = await getTranslations("Global.actions");
 
 	return (
 		<YnsLink
-			href={`/category/${categorySlug}`}
+			href={href ?? `/category/${categorySlug}`}
 			className="group relative block overflow-hidden bg-black/20 backdrop-blur-sm ring-1 ring-white/10 rounded-lg transition-all hover:bg-black/30 hover:ring-white/20 shadow-lg hover:shadow-xl"
 		>
 			<div className="relative overflow-hidden">

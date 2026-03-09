@@ -12,26 +12,39 @@ function computeTotal(items: CartItem[]): number {
 	return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
+// Maps each product slug to its category slug
+const productCategoryMap: Record<string, string> = {
+	"classic-black-hoodie": "apparel",
+	"urban-streetwear-jacket": "apparel",
+	"minimalist-white-tee": "apparel",
+	"designer-sunglasses": "accessories",
+	"leather-crossbody-bag": "accessories",
+	"minimalist-watch": "accessories",
+};
+
 const mockProducts: Product[] = [
 	{
 		id: "prod_1",
 		name: "Classic Black Hoodie",
 		slug: "classic-black-hoodie",
+		summary:
+			"A minimalist black hoodie designed for everyday comfort. Crafted with soft heavyweight cotton and a relaxed streetwear fit.",
 		price: 7900,
 		currency: "USD",
 		active: true,
-		images: [
-			"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
-			"https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&q=80",
-		],
+		stock: 100,
+		images: ["/products/frontalSudadera.png", "/products/traseraSudadera.png"],
 	},
 	{
 		id: "prod_2",
 		name: "Urban Streetwear Jacket",
 		slug: "urban-streetwear-jacket",
+		summary:
+			"A modern bomber-style jacket inspired by urban fashion culture. Lightweight, durable, and designed for movement in the city.",
 		price: 12900,
 		currency: "USD",
 		active: true,
+		stock: 100,
 		images: [
 			"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80",
 			"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80",
@@ -41,9 +54,12 @@ const mockProducts: Product[] = [
 		id: "prod_3",
 		name: "Minimalist White Tee",
 		slug: "minimalist-white-tee",
+		summary:
+			"A clean and versatile white t-shirt made with premium cotton. Perfect for layering or wearing as a simple statement piece.",
 		price: 3500,
 		currency: "USD",
 		active: true,
+		stock: 100,
 		images: [
 			"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80",
 			"https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=800&q=80",
@@ -56,6 +72,7 @@ const mockProducts: Product[] = [
 		price: 8900,
 		currency: "USD",
 		active: true,
+		stock: 100,
 		images: [
 			"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800&q=80",
 			"https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&q=80",
@@ -68,6 +85,7 @@ const mockProducts: Product[] = [
 		price: 15900,
 		currency: "USD",
 		active: true,
+		stock: 100,
 		images: [
 			"https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800&q=80",
 			"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80",
@@ -80,6 +98,7 @@ const mockProducts: Product[] = [
 		price: 19900,
 		currency: "USD",
 		active: true,
+		stock: 100,
 		images: [
 			"https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=800&q=80",
 			"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800&q=80",
@@ -95,7 +114,7 @@ export const mockCommerce = {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
 			const filtered = category
-				? mockProducts.filter((p) => p.slug?.startsWith(category))
+				? mockProducts.filter((p) => p.slug !== undefined && productCategoryMap[p.slug] === category)
 				: mockProducts;
 
 			return {
@@ -130,7 +149,7 @@ export const mockCommerce = {
 	},
 
 	category: {
-		get: async (slug: string) => {
+		get: async (_slug: string) => {
 			// Simulate API delay
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -208,13 +227,7 @@ export const mockCommerce = {
 			return cart;
 		},
 
-		remove: async ({
-			cartId,
-			variantId,
-		}: {
-			cartId: string;
-			variantId: string;
-		}): Promise<Cart> => {
+		remove: async ({ cartId, variantId }: { cartId: string; variantId: string }): Promise<Cart> => {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
 			const cart = mockCarts.get(cartId);

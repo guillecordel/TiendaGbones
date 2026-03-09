@@ -11,7 +11,7 @@ export function MobileMenu() {
 
 	const links = [
 		{ href: "/", label: "Home" },
-		{ href: "/category/apparel", label: "Apparel" },
+		{ href: "/apparel", label: "Apparel" },
 		{ href: "/category/accessories", label: "Accessories" },
 		{ href: "/products", label: "All Products" },
 	];

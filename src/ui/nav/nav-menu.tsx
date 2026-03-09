@@ -9,7 +9,7 @@ const links = [
 	},
 	...StoreConfig.categories.map(({ name, slug }) => ({
 		label: name,
-		href: `/category/${slug}`,
+		href: slug === "apparel" ? "/apparel" : `/category/${slug}`,
 	})),
 	{
 		label: "Digital",

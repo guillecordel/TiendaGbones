@@ -53,7 +53,12 @@ export default async function Home() {
 					<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 						<div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
 							{StoreConfig.categories.map(({ slug, image: src }) => (
-								<CategoryBox key={slug} categorySlug={slug} src={src} />
+								<CategoryBox
+									key={slug}
+									categorySlug={slug}
+									src={src}
+									href={slug === "apparel" ? "/apparel" : undefined}
+								/>
 							))}
 						</div>
 					</div>
@@ -108,7 +113,12 @@ export default async function Home() {
 				<section className="w-full py-8">
 					<div className="grid gap-8 lg:grid-cols-2">
 						{StoreConfig.categories.map(({ slug, image: src }) => (
-							<CategoryBox key={slug} categorySlug={slug} src={src} />
+							<CategoryBox
+								key={slug}
+								categorySlug={slug}
+								src={src}
+								href={slug === "apparel" ? "/apparel" : undefined}
+							/>
 						))}
 					</div>
 				</section>

@@ -29,7 +29,7 @@ export default async function CategoryPage(props: { params: Promise<{ slug: stri
 	const params = await props.params;
 	const result = await commerce.product.browse({
 		first: 100,
-		category: params.slug, // YNS SDK uses direct category parameter
+		category: params.slug, //  SDK uses direct category parameter
 	});
 
 	if (!result.data || result.data.length === 0) {
